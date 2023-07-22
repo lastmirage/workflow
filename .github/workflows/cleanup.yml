@@ -20,3 +20,61 @@ jobs:
 
       - name: Clean Up
         run: echo "Clean Up"
+  
+  is-version-pr:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    outputs:
+      is_version_pr: ${{ steps.check.outputs.is_version_pr }}
+      version: ${{ steps.check.outputs.version }}
+    steps:
+      - name: Set Names
+        uses: ./.github/actions/set-names
+        id: names
+      - name: validate semver
+        id: check
+        shell: bash
+        run: |
+          NAT='0|[1-9][0-9]*'
+          ALPHANUM='[0-9]*[A-Za-z-][0-9A-Za-z-]*'
+          IDENT="$NAT|$ALPHANUM"
+          FIELD='[0-9A-Za-z-]+'
+          
+          SEMVER_REGEX="\
+          ^[vV]?\
+          ($NAT)\\.($NAT)\\.($NAT)\
+          (\\-(${IDENT})(\\.(${IDENT}))*)?\
+          (\\+${FIELD}(\\.${FIELD})*)?$"
+      
+          echo "version=${{ steps.names.outputs.BRANCH_NAME }}" >> $GITHUB_OUTPUT
+
+          if [[ "${{ steps.names.outputs.BRANCH_NAME }}" =~ $SEMVER_REGEX ]]; then
+            echo "is_version_pr=1" >> $GITHUB_OUTPUT
+          else
+            echo "is_version_pr=0" >> $GITHUB_OUTPUT
+          fi
+
+  release-stage:
+    if: ${{ needs.is-version-pr.outputs.is_version_pr == 1 }}
+    runs-on: ubuntu-latest
+    needs:
+      - is-version-pr
+    steps:
+      - name: Create tag
+        uses: actions/github-script@v5
+        with:
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/${{ needs.is-version-pr.outputs.version }}',
+              sha: context.sha
+            })
+
+    # - name: Merge development -> staging
+    #   uses: devmasx/merge-branch@master
+    #   with:
+    #     type: now
+    #     from_branch: develop
+    #     target_branch: stage
+    #     github_token: ${{ secrets.GITHUB_TOKEN }}
