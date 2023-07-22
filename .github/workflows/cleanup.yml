@@ -21,11 +21,11 @@ jobs:
       - name: Clean Up
         run: echo "Clean Up"
   
-  is-version-pr:
+  is-versioning-pr:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
-      is_version_pr: ${{ steps.check.outputs.is_version_pr }}
+      is_versioning_pr: ${{ steps.check.outputs.is_version_pr }}
       version: ${{ steps.check.outputs.version }}
     steps:
       - name: Checkout
@@ -58,10 +58,10 @@ jobs:
 
   release-stage:
     permissions: write-all
-    if: ${{ needs.is-version-pr.outputs.is_version_pr == 1 }}
+    if: ${{ needs.is-versioning-pr.outputs.is_versioning_pr == 1 }}
     runs-on: ubuntu-latest
     needs:
-      - is-version-pr
+      - is-versioning-pr
     steps:
       - name: Create tag
         uses: actions/github-script@v6
@@ -70,14 +70,14 @@ jobs:
             github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: 'refs/tags/${{ needs.is-version-pr.outputs.version }}',
+              ref: 'refs/tags/${{ needs.is-versioning-pr.outputs.version }}',
               sha: context.sha
             })
 
-    # - name: Merge development -> staging
-    #   uses: devmasx/merge-branch@master
-    #   with:
-    #     type: now
-    #     from_branch: develop
-    #     target_branch: stage
-    #     github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Merge develop -> staging
+        uses: devmasx/merge-branch@master
+        with:
+          type: now
+          from_branch: develop
+          target_branch: stage
+          github_token: ${{ secrets.GITHUB_TOKEN }}
