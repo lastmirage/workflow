@@ -1,0 +1,35 @@
+name: 'Set Scripts for CI'
+description: 'copy scripts to CI'
+inputs:
+  host:
+    description: 'CI host'
+    required: true
+  username:
+    description: 'CI username'
+    required: true
+  key:
+    description: 'CI key'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Copy CI scripts
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: ${{ inputs.host }}
+        username: ${{ inputs.username }}
+        key: ${{ inputs.key }}
+        strip_components: 1
+        rm: true
+        source: 'ci/*'
+        target: ci
+
+    - name: Change ci script to executable
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: ${{ inputs.host }}
+        username: ${{ inputs.username }}
+        key: ${{ inputs.key }}
+        script: |
+          cd ci/scripts
+          chmod +x *.sh

@@ -1,0 +1,51 @@
+name: 'Set Names'
+description: 'get branch names and set to outputs'
+outputs:
+  IMAGE_NAME:
+    value: ${{ steps.names.outputs.IMAGE_NAME }}
+  BRANCH_NAME:
+    value: ${{ steps.names.outputs.BRANCH_NAME }}
+  BRANCH_TYPE:
+    value: ${{ steps.names.outputs.BRANCH_TYPE }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Get branch name
+      id: branch-name
+      uses: tj-actions/branch-names@v7
+
+    - name: Split branch name
+      uses: xom9ikk/split@v1
+      id: split
+      with:
+        string: ${{ steps.branch-name.outputs.current_branch }}
+        separator: /
+        limit: -1
+
+    - name: Set Names
+      id: names
+      env:
+        BRANCH_TYPE: ${{ steps.split.outputs._0 }}
+        BRANCH_NAME: ${{ steps.split.outputs._1 }}
+      shell: bash
+      run: |
+        case $BRANCH_TYPE in
+          "develop"|"stage"|"release")
+            echo "IMAGE_NAME=cms-next" >> $GITHUB_OUTPUT
+            ;;
+          "kiledel")
+            echo "IMAGE_NAME=kiledel" >> $GITHUB_OUTPUT
+            ;;
+          "feature"|"fix"|v*)
+            echo "IMAGE_NAME=pr" >> $GITHUB_OUTPUT
+            ;;
+        esac
+
+        echo "BRANCH_TYPE=$BRANCH_TYPE" >> $GITHUB_OUTPUT
+
+        if [ -z $BRANCH_NAME ]
+        then
+          echo "BRANCH_NAME=$BRANCH_TYPE" >> $GITHUB_OUTPUT
+        else
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_OUTPUT
+        fi
