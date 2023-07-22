@@ -57,6 +57,7 @@ jobs:
           fi
 
   release-stage:
+    permissions: write-all
     if: ${{ needs.is-version-pr.outputs.is_version_pr == 1 }}
     runs-on: ubuntu-latest
     needs:
