@@ -63,7 +63,7 @@ jobs:
       - is-version-pr
     steps:
       - name: Create tag
-        uses: actions/github-script@v5
+        uses: actions/github-script@v6
         with:
           script: |
             github.rest.git.createRef({
