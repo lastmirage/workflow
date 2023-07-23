@@ -15,7 +15,7 @@ runs:
       uses: tj-actions/branch-names@v7
 
     - name: Split branch name
-      uses: xom9ikk/split@v1
+      uses: xom9ikk/split@v1.1
       id: split
       with:
         string: ${{ steps.branch-name.outputs.current_branch }}
