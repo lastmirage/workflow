@@ -9,13 +9,36 @@ on:
   pull_request:
     branches:
       - develop
-      - "!v[0-9]*"
     types: [opened, synchronize, reopened]
 
 jobs:
+  is-versioning-pr:
+    runs-on: ubuntu-latest
+    outputs:
+      is_versioning_pr: ${{ steps.check.outputs.is_versioning_pr }}
+      version: ${{ steps.check.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set Names
+        uses: ./.github/actions/set-names
+        id: names
+      - name: validate semver
+        id: check
+        uses: ./.github/actions/validate-semver
+        with:
+          version: ${{ steps.names.outputs.BRANCH_NAME }}
+
   build:
+    if: ${{ needs.is-versioning-pr.outputs.is_versioning_pr == 'false' }} 
+    needs:
+      - is-versioning-pr
     runs-on: ubuntu-latest
     steps:
+      - name: test 
+        run: |
+          echo "is_versioning_pr = ${{ needs.is-versioning-pr.outputs.is_versioning_pr }}"
+          echo "version = ${{ needs.is-versioning-pr.outputs.version }}"
       - name: Checkout
         uses: actions/checkout@v3
 

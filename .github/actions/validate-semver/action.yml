@@ -1,0 +1,36 @@
+name: 'validate semver'
+description: 'validate semver and return result'
+inputs:
+  version:
+    description: 'version string to validate'
+    required: true
+outputs:
+    is_versioning_pr:
+      value: ${{ steps.check.outputs.is_versioning_pr }}
+    version:
+      value: ${{ steps.check.outputs.version }}
+runs:
+  using: 'composite'
+  steps:
+      - name: validate semver
+        id: check
+        shell: bash
+        run: |
+          NAT='0|[1-9][0-9]*'
+          ALPHANUM='[0-9]*[A-Za-z-][0-9A-Za-z-]*'
+          IDENT="$NAT|$ALPHANUM"
+          FIELD='[0-9A-Za-z-]+'
+
+          SEMVER_REGEX="\
+          ^[vV]?\
+          ($NAT)\\.($NAT)\\.($NAT)\
+          (\\-(${IDENT})(\\.(${IDENT}))*)?\
+          (\\+${FIELD}(\\.${FIELD})*)?$"
+      
+          if [[ "${{ inputs.version }}" =~ $SEMVER_REGEX ]]; then
+            echo "is_versioning_pr=true" |& tee -a $GITHUB_OUTPUT
+            echo "version=${{ inputs.version }}" |& tee -a $GITHUB_OUTPUT
+          else
+            echo "is_versioning_pr=false" |& tee -a $GITHUB_OUTPUT
+            echo "version=" |& tee -a $GITHUB_OUTPUT
+          fi
