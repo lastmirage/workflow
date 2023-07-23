@@ -25,7 +25,7 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     outputs:
-      is_versioning_pr: ${{ steps.check.outputs.is_version_pr }}
+      is_versioning_pr: ${{ steps.check.outputs.is_versioning_pr }}
       version: ${{ steps.check.outputs.version }}
     steps:
       - name: Checkout

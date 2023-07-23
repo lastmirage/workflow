@@ -6,7 +6,7 @@ inputs:
     required: true
 outputs:
     is_versioning_pr:
-      value: ${{ steps.check.outputs.is_version_pr }}
+      value: ${{ steps.check.outputs.is_versioning_pr }}
     version:
       value: ${{ steps.check.outputs.version }}
 runs:
