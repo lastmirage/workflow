@@ -35,7 +35,7 @@ jobs:
         id: names
       - name: validate semver
         id: check
-        uses: ./.github/actions/set-names
+        uses: ./.github/actions/validate-semver
         with:
           version: ${{ steps.names.outputs.BRANCH_NAME }}
 

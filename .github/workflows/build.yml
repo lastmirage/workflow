@@ -25,9 +25,9 @@ jobs:
         id: names
       - name: validate semver
         id: check
-        uses: ./.github/actions/set-names
+        uses: ./.github/actions/validate-semver
         with:
-          check_for: ${{ steps.names.outputs.BRANCH_NAME }}
+          version: ${{ steps.names.outputs.BRANCH_NAME }}
 
   build:
     if: ${{ needs.is-versioning-pr.outputs.is_versioning_pr == 0 }}
