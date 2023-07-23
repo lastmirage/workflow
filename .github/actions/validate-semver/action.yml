@@ -1,7 +1,7 @@
 name: 'validate semver'
 description: 'validate semver and return result'
 inputs:
-  version:
+  check_for:
     description: 'version string to validate'
     required: true
 outputs:
@@ -27,9 +27,9 @@ runs:
           (\\-(${IDENT})(\\.(${IDENT}))*)?\
           (\\+${FIELD}(\\.${FIELD})*)?$"
       
-          if [[ "${{ inputs.version }}" =~ $SEMVER_REGEX ]]; then
+          if [[ "${{ inputs.check_for }}" =~ $SEMVER_REGEX ]]; then
             echo "is_version_pr=1" >> $GITHUB_OUTPUT
-            echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
+            echo "version=${{ inputs.check_for }}" >> $GITHUB_OUTPUT
           else
             echo "is_version_pr=0" >> $GITHUB_OUTPUT
             echo "version=" >> $GITHUB_OUTPUT
