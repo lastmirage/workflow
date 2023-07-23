@@ -28,9 +28,9 @@ runs:
           (\\+${FIELD}(\\.${FIELD})*)?$"
       
           if [[ "${{ inputs.version }}" =~ $SEMVER_REGEX ]]; then
-            echo "is_versioning_pr=true" |& tee $GITHUB_OUTPUT
-            echo "version=${{ inputs.version }}" |& tee $GITHUB_OUTPUT
+            echo "is_versioning_pr=true" |& tee -a $GITHUB_OUTPUT
+            echo "version=${{ inputs.version }}" |& tee -a $GITHUB_OUTPUT
           else
-            echo "is_versioning_pr=false" |& tee $GITHUB_OUTPUT
-            echo "version=" |& tee $GITHUB_OUTPUT
+            echo "is_versioning_pr=false" |& tee -a $GITHUB_OUTPUT
+            echo "version=" |& tee -a $GITHUB_OUTPUT
           fi
