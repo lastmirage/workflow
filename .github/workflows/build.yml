@@ -36,7 +36,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: test 
-        run: echo ${{ needs.is-versioning-pr.outputs.is_versioning_pr }}
+        run: |
+          echo "is_versioning_pr = ${{ needs.is-versioning-pr.outputs.is_versioning_pr }}"
+          echo "version = ${{ needs.is-versioning-pr.outputs.version }}"
       - name: Checkout
         uses: actions/checkout@v3
 
