@@ -28,9 +28,9 @@ runs:
           (\\+${FIELD}(\\.${FIELD})*)?$"
       
           if [[ "${{ inputs.version }}" =~ $SEMVER_REGEX ]]; then
-            echo "is_version_pr=1" >> $GITHUB_OUTPUT
-            echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
+            echo "is_version_pr=1" | tee $GITHUB_OUTPUT
+            echo "version=${{ inputs.version }}" | tee $GITHUB_OUTPUT
           else
-            echo "is_version_pr=0" >> $GITHUB_OUTPUT
-            echo "version=" >> $GITHUB_OUTPUT
+            echo "is_version_pr=0" | tee $GITHUB_OUTPUT
+            echo "version=" | tee $GITHUB_OUTPUT
           fi
