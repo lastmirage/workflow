@@ -41,7 +41,7 @@ jobs:
 
   release-stage:
     permissions: write-all
-    if: ${{ needs.is-versioning-pr.outputs.is_versioning_pr }} == 'true'
+    if: ${{ needs.is-versioning-pr.outputs.is_versioning_pr == 'true' }} 
     runs-on: ubuntu-latest
     needs:
       - is-versioning-pr
