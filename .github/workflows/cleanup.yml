@@ -35,26 +35,9 @@ jobs:
         id: names
       - name: validate semver
         id: check
-        shell: bash
-        run: |
-          NAT='0|[1-9][0-9]*'
-          ALPHANUM='[0-9]*[A-Za-z-][0-9A-Za-z-]*'
-          IDENT="$NAT|$ALPHANUM"
-          FIELD='[0-9A-Za-z-]+'
-          
-          SEMVER_REGEX="\
-          ^[vV]?\
-          ($NAT)\\.($NAT)\\.($NAT)\
-          (\\-(${IDENT})(\\.(${IDENT}))*)?\
-          (\\+${FIELD}(\\.${FIELD})*)?$"
-      
-          echo "version=${{ steps.names.outputs.BRANCH_NAME }}" >> $GITHUB_OUTPUT
-
-          if [[ "${{ steps.names.outputs.BRANCH_NAME }}" =~ $SEMVER_REGEX ]]; then
-            echo "is_version_pr=1" >> $GITHUB_OUTPUT
-          else
-            echo "is_version_pr=0" >> $GITHUB_OUTPUT
-          fi
+        uses: ./.github/actions/set-names
+        with:
+          version: ${{ steps.names.outputs.BRANCH_NAME }}
 
   release-stage:
     permissions: write-all
