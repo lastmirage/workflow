@@ -35,6 +35,8 @@ jobs:
       - is-versioning-pr
     runs-on: ubuntu-latest
     steps:
+      - name: test 
+        run: echo ${{ needs.is-versioning-pr.outputs.is_versioning_pr }}
       - name: Checkout
         uses: actions/checkout@v3
 
